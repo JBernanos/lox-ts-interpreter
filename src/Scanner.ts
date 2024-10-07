@@ -75,7 +75,8 @@ export class Scanner {
         this.addToken(TokenType.SEMICOLON, null);
         break;
       case "*":
-        this.addToken(TokenType.STAR, null);
+        if (this.match("/")) this.advance();
+        else this.addToken(TokenType.STAR, null);
         break;
       case "!":
         this.addToken(this.match("=") ? TokenType.BANG_EQUAL : TokenType.BANG, null);
@@ -93,6 +94,10 @@ export class Scanner {
         if (this.match("/")) {
           // A comment goes until the end of the line.
           while (this.peek() != "\n" && !this.isAtEnd()) this.advance();
+        } else if (this.match("*")) {
+          while (this.peek() != "*" && this.peekNext() != "/" && !this.isAtEnd()) {
+            this.advance();
+          }
         } else {
           this.addToken(TokenType.SLASH, null);
         }
